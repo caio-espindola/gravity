@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <cstdint>
@@ -14,7 +16,7 @@ namespace Tools{
 
     double* vectorSum(double v1[], double v2[]){
         double x, y;
-        double* vector;
+        double* vector = new double[2];
 
         x = v1[0] + v2[0];
         y = v1[1] + v2[1];
@@ -27,7 +29,7 @@ namespace Tools{
 
     double* vectorSub(double v1[], double v2[]){
         double x, y;
-        double* vector;
+        double* vector = new double[2];
 
         x = v1[0] - v2[0];
         y = v1[1] - v2[1];
@@ -54,7 +56,7 @@ namespace Tools{
         double x = cos(theta) * rho;
         double y = sin(theta) * rho;
 
-        double* coords;
+        double* coords = new double[2];
         coords[0] = x;
         coords[1] = y;
 
@@ -67,8 +69,11 @@ namespace Tools{
     }
 
     double* absoluteVector(double coords[], double rel_vector[]){
-        double* abs_vec;
-        double* result = vectorSub(rel_vector, coords);
+        double* abs_vec = new double[2];
+        double* result = new double[2];
+
+        result[0] = vectorSub(rel_vector, coords)[0];
+        result[1] = vectorSub(rel_vector, coords)[1];
 
         abs_vec[0] = result[0];
         abs_vec[1] = result[1];

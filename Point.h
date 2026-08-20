@@ -1,8 +1,10 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <cstdint>
 #include <vector>
-#include "Tools.cpp"
+#include "Tools.h"
 
 class Point {
     public:
@@ -46,7 +48,7 @@ class Point {
         }
         
         double* getCoords(){
-            return coords;
+            return this->coords;
         }
 
         double getDistance(Point p){

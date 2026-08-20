@@ -4,8 +4,10 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include "Planet.cpp"
-#include "Tools.cpp"
+#include "Planet.h"
+#include "Body.h"
+#include "Point.h"
+#include "Tools.h"
 
 using namespace std;
 
@@ -25,7 +27,7 @@ int main(){
     for (int i = 0; i < 525600; i++){
         file << Tools::coordsToString(earth.getCoords());
 
-        sun.applyGravTo(earth);
+        sun.applyGravTo(p_earth);
     }
 
     file.close();
