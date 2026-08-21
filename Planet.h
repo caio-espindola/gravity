@@ -28,6 +28,8 @@ class Planet: public Body {
         }
 
         void applyGravTo(Planet* b){
+            // cout << "sun.applyGravTo()\n";
+
             double dist = this->getDistance(*b);
             double acceleration = (Tools::G * Tools::TONtoKG(this->mass)) / (pow(Tools::KMtoM(dist), 2));
             acceleration *= 60; // apply for 60 seconds
@@ -47,12 +49,9 @@ class Planet: public Body {
             cartesians[0] = Tools::toCartesian(polars)[0];
             cartesians[1] = Tools::toCartesian(polars)[1];
 
-            double vector[2];
-            vector[0] = cartesians[0];
-            vector[1] = cartesians[1];
+            (*b).applyForce(cartesians);
+            // cout << cartesians[0] << "\n" << cartesians[1] << "\n";
             delete cartesians;
-
-            (*b).applyForce(vector);
         }
 
 };

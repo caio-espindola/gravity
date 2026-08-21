@@ -12,22 +12,29 @@
 using namespace std;
 
 int main(){
-    double aphelion = 152.1 * pow(10, 6);
 
     Planet* p_sun = new Planet(0, 0, 0, 0, Tools::SOLARMASS, 695700);
-    Planet* p_earth = new Planet(aphelion, 0, 0, 1757.4, Tools::EARTHMASS, 6371);
+    Planet* p_earth = new Planet(Tools::APHELION, 0, 0, 1757.4, Tools::EARTHMASS, 6371);
 
     Planet sun = *p_sun;
     Planet earth = *p_earth;
 
     sun.addChild(earth);
 
+    Body allBodies[] = {sun, earth};
+
     ofstream file("log.txt");
 
-    for (int i = 0; i < 525600; i++){
+    for (int i = 0; i < 10; i++){ //525600
         file << Tools::coordsToString(earth.getCoords());
 
         sun.applyGravTo(p_earth);
+
+        for (Body element: allBodies){
+
+            element.recalculateTrajectory();
+
+        }
     }
 
     file.close();
