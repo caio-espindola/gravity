@@ -10,37 +10,19 @@
 using namespace std;
 
 namespace Tools{
-    const double G = 6.674 * pow(10, -11); // Gravitational Constant in m3/kg*s2
-    const double SOLARMASS = 1.989 * pow(10, 27); // Mass of the sun in metric tons
-    const double EARTHMASS = 5.972 * pow(10, 21); // Mass of the earth in metric tons
-    const double APHELION = 152.1 * pow(10, 6); // Aphelion of the earth's orbit in kilometers
 
-    double* vectorSum(double v1[], double v2[]){ // Receives two vectors and return their sum
-        double x, y;
-        double* vector = new double[2];
+    void vectorSum(double v1[], double v2[], double* sum){ // Receives two vectors and return their sum
 
-        x = v1[0] + v2[0];
-        y = v1[1] + v2[1];
+        sum[0] = v1[0] + v2[0];
+        sum[1] = v1[1] + v2[1];
 
-        vector[0] = x;
-        vector[1] = y;
-
-        return vector;
     }
 
-    double* vectorSub(double v1[], double v2[]){ // Receives two vectors and returns their difference
-        // cout << "vectorSub(sun->getCoords(), earth.getCoords())\n";
+    void vectorSub(double v1[], double v2[], double* sub){ // Receives two vectors and returns their difference
 
-        double x, y;
-        double* vector = new double[2];
+        sub[0] = v1[0] - v2[0];
+        sub[1] = v1[1] - v2[1];
 
-        x = v1[0] - v2[0];
-        y = v1[1] - v2[1];
-
-        vector[0] = x;
-        vector[1] = y;
-
-        return vector;
     }
 
     double getModulus(double vec[]){ // Receives a vector and returns its modulus / hipothenuse
@@ -52,18 +34,21 @@ namespace Tools{
         return atan(vec[1]/vec[0]);
     }
 
-    double* toCartesian(double polar[]){ // Receives a polar vector (rho, theta) and returns its cartesian equivalent (x, y)
+    void toCartesian(double polar[], double* cartesian){ // Receives a polar vector (rho, theta) and returns its cartesian equivalent (x, y)
+
         double rho = polar[0];
         double theta = polar[1];
 
         double x = cos(theta) * rho;
         double y = sin(theta) * rho;
 
-        double* coords = new double[2];
-        coords[0] = x;
-        coords[1] = y;
+        cartesian[0] = x;
+        cartesian[1] = y;
 
-        return coords;
+    }
+
+    void toPolar(double cartesian[], double* polar){
+
     }
 
     string coordsToString(double coords[]){ // Returns a vector as a formated semicolon-separated string for use in CSV files
@@ -71,17 +56,10 @@ namespace Tools{
         return line;
     }
 
-    double* absoluteVector(double coords[], double rel_vector[]){ // Receives a set of coordinates and a vector originating in that point and returns an equivalent vector originating in (0, 0)
-        double* abs_vec = new double[2];
-        double* result = new double[2];
+    void absoluteVector(double coords[], double rel_vector[], double* abs_vec){ // Receives a set of coordinates and a vector originating in that point and returns an equivalent vector originating in (0, 0)
 
-        result[0] = vectorSub(rel_vector, coords)[0];
-        result[1] = vectorSub(rel_vector, coords)[1];
+        vectorSub(rel_vector, coords, abs_vec);
 
-        abs_vec[0] = result[0];
-        abs_vec[1] = result[1];
-
-        return abs_vec;
     }
 
     double TONtoKG(double tons){ // Converts metric tons to kilograms
