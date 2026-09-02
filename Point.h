@@ -8,62 +8,102 @@
 
 class Point {
     public:
-        double x, y;
-        double coords[2];
-        double trajectory_abs[2];
         
         Point(double x, double y){
-            this->x = x;
-            this->y = y;
             coords[0] = x;
             coords[1] = y;
         }
 
         Point(double x, double y, double trajectory_abs_x, double trajectory_abs_y){
-            this->x = x;
-            this->y = y;
             coords[0] = x;
             coords[1] = y;
             trajectory_abs[0] = trajectory_abs_x;
             trajectory_abs[1] = trajectory_abs_y;
         }
 
-        void applyForce(double vector[]){ // Receives a vector and updates this point's absolute trajectory as the sum of the previous trajectory and the new parameter
-            // cout << "earth.applyForce()\n" << trajectory_abs[0] << "\n" << trajectory_abs[1] << "\n";
+        void updatePosition(){ // Alters the point's position based on its current trajectory
+            double* coords = new double[2];
+            double* trajectory = new double[2];
+
+            this->getTrajectory(trajectory);
+            this->getCoords(coords);
+
+            Tools::vectorSum(coords, trajectory, coords);
+
+            this->setCoords(coords[0], coords[1]);
+
+            delete coords;
+            delete trajectory;
+        }
+
+        void applyTrajectory(double vector[]){ // Receives a vector and updates this point's absolute trajectory as the sum of the previous trajectory and the new parameter
+
+            Tools::vectorSum(this->trajectory_abs, vector, this->trajectory_abs);
+
+        }
+
+        double getSpeed(){ // Returns the absolute speed of the point in kilometers per minute
+            return Tools::getModulus(this->trajectory_abs);
+        }
+
+        double getSpeed(Point* p){ // Receives a second point and returns this point's speed relative to it
+            double* rel_trajectory = new double[2];
+            double* this_trajectory = new double[2];
+            double* point_trajectory = new double[2];
+
+            this->getTrajectory(this_trajectory);
+            p->getTrajectory(point_trajectory);
             
-            trajectory_abs[0] = Tools::vectorSum(trajectory_abs, vector)[0];
-            trajectory_abs[1] = Tools::vectorSum(trajectory_abs, vector)[1];
+            Tools::vectorSub(this_trajectory, point_trajectory, rel_trajectory);
+            double speed = Tools::getModulus(rel_trajectory);
 
-            cout << trajectory_abs[0] << "\n" << trajectory_abs[1] << "\n";
+            delete rel_trajectory;
+            delete this_trajectory;
+            delete point_trajectory;
+
+            return speed;
         }
 
-        double getSpeed(){ // Returns the sbsolute speed of the point in kilometers per minute
-            return Tools::getModulus(trajectory_abs);
-        }
+        void getTrajectory(double* trajectory){ // Returns the current absolute trajectory
 
-        double getSpeed(Point p){ // Receives a second point and returns this point's speed relative to it
-            double* rel_trajectory = Tools::vectorSub(this->getTrajectory(), p.getTrajectory());
-            return Tools::getModulus(rel_trajectory);
-        }
+            trajectory[0] = this->trajectory_abs[0];
+            trajectory[1] = this->trajectory_abs[1];
 
-        double* getTrajectory(){ // Returns the current absolute trajectory
-            return trajectory_abs;
         }
         
-        double* getCoords(){
-            double* coordinates = new double[2];
+        void getCoords(double* coordinates){
 
             coordinates[0] = this->coords[0];
             coordinates[1] = this->coords[1];
 
-            // cout << "sun.getCoords:\n" << coordinates;
-            return coordinates;
         }
 
-        double getDistance(Point p){
-            // cout << "sun.getDistance(earth)\n";
-
-            double* rel_vector = Tools::vectorSub(this->getCoords(), p.getCoords());
-            return Tools::getModulus(rel_vector);
+        void setCoords(double x, double y){
+            this->coords[0] = x;
+            this->coords[1] = y;
         }
+
+        double getDistance(Point* p){
+
+            double* rel_vector = new double[2];
+            double* this_coords = new double[2];
+            double* point_coords = new double[2];
+
+            this->getCoords(this_coords);
+            p->getCoords(point_coords);
+
+            Tools::vectorSub(this_coords, point_coords, rel_vector);
+            double distance = Tools::getModulus(rel_vector);
+
+            delete rel_vector;
+            delete this_coords;
+            delete point_coords;
+
+            return distance;
+        }
+
+    private:
+        
+        double coords[2];
+        double trajectory_abs[2];
 };

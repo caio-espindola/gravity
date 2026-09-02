@@ -6,27 +6,22 @@
 #include <vector>
 #include "Point.h"
 #include "Tools.h"
+#include "Data.h"
 
 class Body: public Point {
     public:
-        double mass; // Tons
-        double radius; // Kilometers
 
         Body(double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Point(x, y, trajectory_abs_x, trajectory_abs_y){
-            this->x = x;
-            this->y = y;
+
             this->mass = mass;
             this->radius = radius;
-            coords[0] = x;
-            coords[1] = y;
-            trajectory_abs[0] = trajectory_abs_x;
-            trajectory_abs[1] = trajectory_abs_y;
+
         }
 
-        bool colision(Body b){
+        bool colision(Body* b){
             double distance = this->getDistance(b);
             distance -= this->getRadius();
-            distance -= b.getRadius();
+            distance -= b->getRadius();
 
             if (distance < 0){
                 return true;
@@ -35,35 +30,44 @@ class Body: public Point {
             }
         }
 
-        void applyGravTo(Body b){
+        void applyGravTo(Body* b){
             double dist = this->getDistance(b);
-            double acceleration = (Tools::G * Tools::TONtoKG(this->mass)) / (pow(Tools::KMtoM(dist), 2));
+            double acceleration = (Data::G * Tools::TONtoKG(this->mass)) / (pow(Tools::KMtoM(dist), 2));
             acceleration *= 60; // apply for 60 seconds
             acceleration *= 0.06; // m/s to km/min
 
             double* rel_vector = new double[2];
+            double* body_coords = new double[2];
+            double* this_coords = new double[2];
+            double* cartesians = new double[2];
 
-            rel_vector[0] = Tools::vectorSub(b.getCoords(), this->getCoords())[0];
-            rel_vector[1] = Tools::vectorSub(b.getCoords(), this->getCoords())[1];
+            b->getCoords(body_coords);
+            this->getCoords(this_coords);
+
+            Tools::vectorSub(body_coords, this_coords, rel_vector);
+            delete body_coords;
+            delete this_coords;
 
             double argument = Tools::getArgument(rel_vector);
             delete rel_vector;
 
             double polars[2] = {acceleration, argument};
-            double* cartesians = new double[2];
 
-            cartesians[0] = Tools::toCartesian(polars)[0];
-            cartesians[1] = Tools::toCartesian(polars)[1];
+            Tools::toCartesian(polars, cartesians);
 
-            double vector[2];
-            vector[0] = cartesians[0];
-            vector[1] = cartesians[1];
+            b->applyTrajectory(cartesians);
             delete cartesians;
-
-            b.applyForce(vector);
         }
 
         double getRadius(){
-            return radius;
+            return this->radius;
         }
+
+        double getMass(){
+            return this->mass;
+        }
+
+    private:
+        double mass; // Tons
+        double radius; // Kilometers
 };

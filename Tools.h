@@ -47,7 +47,7 @@ namespace Tools{
 
     }
 
-    void toPolar(double cartesian[], double* polar){
+    void toPolar(double cartesian[], double* polar){ //TODO: implement cartesian to polar converter
 
     }
 
