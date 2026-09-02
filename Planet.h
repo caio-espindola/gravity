@@ -22,8 +22,11 @@ class Planet: public Body {
         }
 
         void applyGravity(){
-            for (Planet* child : children){
-                this->applyGravTo(child);
+            Planet* p_child;
+
+            for (int i = 0; i < children.size(); i++){
+                p_child = children.at(i);
+                this->applyGravTo(p_child);
             }
         }
 

@@ -24,21 +24,34 @@ class Point {
         void updatePosition(){ // Alters the point's position based on its current trajectory
             double* coords = new double[2];
             double* trajectory = new double[2];
+            double* new_coords = new double[2];
 
             this->getTrajectory(trajectory);
             this->getCoords(coords);
 
-            Tools::vectorSum(coords, trajectory, coords);
+            Tools::vectorSum(coords, trajectory, new_coords);
 
-            this->setCoords(coords[0], coords[1]);
+            this->setCoords(new_coords[0], new_coords[1]);
 
             delete coords;
             delete trajectory;
+            delete new_coords;
         }
 
         void applyTrajectory(double vector[]){ // Receives a vector and updates this point's absolute trajectory as the sum of the previous trajectory and the new parameter
 
-            Tools::vectorSum(this->trajectory_abs, vector, this->trajectory_abs);
+            cout << "vector: " << vector[0] << " / " << vector[1] << "\n";
+            
+            double* new_trajectory = new double[2];
+            double* trajectory = new double[2];
+
+            this->getTrajectory(trajectory);
+
+            Tools::vectorSum(trajectory, vector, new_trajectory);
+
+            this->setTrajectory(new_trajectory[0], new_trajectory[1]);
+            delete new_trajectory;
+            delete trajectory;
 
         }
 
@@ -69,6 +82,8 @@ class Point {
             trajectory[0] = this->trajectory_abs[0];
             trajectory[1] = this->trajectory_abs[1];
 
+            // cout << "trajectory from get(): " << this->trajectory_abs[0] << " / " << this->trajectory_abs[1] << "\n";
+
         }
         
         void getCoords(double* coordinates){
@@ -81,6 +96,15 @@ class Point {
         void setCoords(double x, double y){
             this->coords[0] = x;
             this->coords[1] = y;
+        }
+
+        void setTrajectory(double x, double y){
+            // cout << "previous: " << this->trajectory_abs[0] << " / " << this->trajectory_abs[1] << "\n";
+
+            this->trajectory_abs[0] = x;
+            this->trajectory_abs[1] = y;
+
+            // cout << "after: " << this->trajectory_abs[0] << " / " << this->trajectory_abs[1] << "\n";
         }
 
         double getDistance(Point* p){

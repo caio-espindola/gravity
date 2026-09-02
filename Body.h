@@ -32,7 +32,7 @@ class Body: public Point {
 
         void applyGravTo(Body* b){
             double dist = this->getDistance(b);
-            double acceleration = (Data::G * Tools::TONtoKG(this->mass)) / (pow(Tools::KMtoM(dist), 2));
+            double acceleration = (Data::G * Tools::TONtoKG(this->getMass())) / (pow(Tools::KMtoM(dist), 2));
             acceleration *= 60; // apply for 60 seconds
             acceleration *= 0.06; // m/s to km/min
 
@@ -44,7 +44,7 @@ class Body: public Point {
             b->getCoords(body_coords);
             this->getCoords(this_coords);
 
-            Tools::vectorSub(body_coords, this_coords, rel_vector);
+            Tools::vectorSub(this_coords, body_coords, rel_vector);
             delete body_coords;
             delete this_coords;
 
@@ -55,7 +55,9 @@ class Body: public Point {
 
             Tools::toCartesian(polars, cartesians);
 
+            cout << "applyTrajectory() before" << "\n";
             b->applyTrajectory(cartesians);
+            cout << "applyTrajectory() after" << "\n";
             delete cartesians;
         }
 
