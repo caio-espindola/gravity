@@ -50,9 +50,9 @@ class Body: public Point {
 
             Tools::toCartesian(polars, cartesians);
 
-            cout << "applyTrajectory() before" << "\n";
+            // cout << "applyTrajectory() before" << "\n";
             b->applyTrajectory(cartesians);
-            cout << "applyTrajectory() after" << "\n";
+            // cout << "applyTrajectory() after" << "\n";
 
             delete rel_vector;
             delete body_coords;

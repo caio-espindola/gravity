@@ -12,17 +12,17 @@ using namespace std;
 
 namespace Tools{
 
-    void vectorSum();
-    void vectorSub();
-    double getModulus();
-    double getArgument();
-    void toCartesian();
-    void toPolar();
-    string coordsToString();
-    void absoluteVector();
-    double calcAcceleration();
-    double TONtoKG();
-    double KMtoM();
+    void vectorSum(double v1[], double v2[], double* sum);
+    void vectorSub(double v1[], double v2[], double* sub);
+    double getModulus(double vec[]);
+    double getArgument(double vec[]);
+    void toCartesian(double polar[], double* cartesian);
+    void toPolar(double cartesian[], double* polar);
+    string coordsToString(double coords[]);
+    void absoluteVector(double coords[], double rel_vector[], double* abs_vec);
+    double calcAcceleration(double mass, double dist);
+    double TONtoKG(double tons);
+    double KMtoM(double kms);
 
     /* Receives two vectors and return their sum
        @param v1 A cartesian vector
