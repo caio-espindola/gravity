@@ -20,7 +20,7 @@ int main(){
     Planet sun = *p_sun;
     Planet earth = *p_earth;
 
-    sun.addChild(p_earth);
+    p_sun->addChild(p_earth);
 
     Body* allBodies[] = {p_sun, p_earth};
 
@@ -29,13 +29,11 @@ int main(){
     double* coords = new double[2];
     double* trajectory = new double[2];
 
-    for (int i = 0; i < 10; i++){ //525600
+    for (int i = 0; i < 525600; i++){ //525600
         p_earth->getCoords(coords);
         p_earth->getTrajectory(trajectory);
 
         file << Tools::coordsToString(coords);
-        cout << "trajectory: " << trajectory[0] << " / " << trajectory[1] << "\n";
-        cout << "coords: " << coords[0] << " / " << coords[1] << "\n\n";
 
         p_sun->applyGravity();
 

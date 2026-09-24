@@ -14,4 +14,5 @@ namespace Data{
     const double SOLARMASS = 1.989 * pow(10, 27); // Mass of the sun in metric tons
     const double EARTHMASS = 5.972 * pow(10, 21); // Mass of the earth in metric tons
     const double APHELION = 152.1 * pow(10, 6); // Aphelion of the earth's orbit in kilometers
+    const double PI = M_PI;
 }
