@@ -38,6 +38,7 @@ class Body: public Point {
             double* body_coords = new double[2];
             double* this_coords = new double[2];
             double* cartesians = new double[2];
+            ofstream file2("log2.txt");
             
             b->getCoords(body_coords);
             this->getCoords(this_coords);
@@ -45,10 +46,12 @@ class Body: public Point {
             Tools::vectorSub(this_coords, body_coords, rel_vector);
 
             double argument = Tools::getArgument(rel_vector);
+            // cout << Tools::getArgument(test) << "\n";
 
             double polars[2] = {acceleration, argument};
 
             Tools::toCartesian(polars, cartesians);
+            // cout << Tools::coordsToString(cartesians) << "\n";
 
             b->applyTrajectory(cartesians);
 

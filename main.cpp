@@ -34,6 +34,8 @@ int main(){
         p_earth->getTrajectory(trajectory);
 
         file << Tools::coordsToString(coords);
+        // cout << "trajectory: " << trajectory[0] << " / " << trajectory[1] << "\n";
+        // cout << "coords: " << coords[0] << " / " << coords[1] << "\n\n";
 
         p_sun->applyGravity();
 
