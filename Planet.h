@@ -11,7 +11,7 @@
 class Planet: public Body {
     public:
 
-        Planet(double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Body(x, y, trajectory_abs_x, trajectory_abs_y, mass, radius){}
+        Planet(string name, double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Body(name, x, y, trajectory_abs_x, trajectory_abs_y, mass, radius){}
 
         void addChild(Planet* p){
             this->children.push_back(p);

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include "Planet.h"
 #include "Body.h"
@@ -29,13 +30,13 @@ int main(){
     double* coords = new double[2];
     double* trajectory = new double[2];
 
-    for (int i = 0; i < 525600; i++){ //525600
+    int i;
+
+    for (i = 0; i < 525680; i++){ //525680
         p_earth->getCoords(coords);
         p_earth->getTrajectory(trajectory);
 
         file << Tools::coordsToString(coords);
-        // cout << "trajectory: " << trajectory[0] << " / " << trajectory[1] << "\n";
-        // cout << "coords: " << coords[0] << " / " << coords[1] << "\n\n";
 
         p_sun->applyGravity();
 
@@ -48,4 +49,22 @@ int main(){
 
     delete coords;
     file.close();
+}
+
+void prompt(){
+
+    cout << ">";
+    string cmdfull;
+    cin >> cmdfull;
+    cout << "\n";
+
+    string* cmd;
+
+    split(cmdfull, cmd);
+
+
+}
+
+void split(string origin, string* target){
+
 }
