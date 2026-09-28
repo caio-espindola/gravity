@@ -11,7 +11,7 @@
 class Body: public Point {
     public:
 
-        Body(double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Point(x, y, trajectory_abs_x, trajectory_abs_y){
+        Body(string name, double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Point(name, x, y, trajectory_abs_x, trajectory_abs_y){
 
             this->mass = mass;
             this->radius = radius;
@@ -38,7 +38,7 @@ class Body: public Point {
             double* body_coords = new double[2];
             double* this_coords = new double[2];
             double* cartesians = new double[2];
-
+            
             b->getCoords(body_coords);
             this->getCoords(this_coords);
 
@@ -50,9 +50,7 @@ class Body: public Point {
 
             Tools::toCartesian(polars, cartesians);
 
-            // cout << "applyTrajectory() before" << "\n";
             b->applyTrajectory(cartesians);
-            // cout << "applyTrajectory() after" << "\n";
 
             delete rel_vector;
             delete body_coords;

@@ -89,7 +89,32 @@ namespace Tools{
             throw "NullInputException";
         }
 
-        return atan(vec[1]/vec[0]);
+        double x = vec[0];
+        double y = vec[1];
+
+        if (x == 0 && y > 0){ // 90 deg
+
+            return Data::PI / 2;
+
+        } else if (x == 0 && y < 0){ // 270 deg
+
+            return 3 * Data::PI / 2;
+
+        } else if (x < 0){ // 2nd and 3rd quadrants
+
+            return atan(y/x) + Data::PI;
+
+        } else if (x > 0 && y <= 0){ // 4th quadrant and 360 deg
+
+            return atan(y/x) + (2 * Data::PI);
+
+        } else if (x == 0 && y == 0){ // (0, 0)
+
+            return 0;
+            
+        }
+
+        return atan(y/x); // 1st quadrant
     }
 
     /* Receives a polar vector and returns its cartesian equivalent
