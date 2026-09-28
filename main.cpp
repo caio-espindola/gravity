@@ -10,20 +10,26 @@
 #include "Point.h"
 #include "Tools.h"
 #include "Data.h"
+#include "Simulation.h"
 
 using namespace std;
 
+Simulation sim;
+
 int main(){
 
-    Planet* p_sun = new Planet(0, 0, 0, 0, Data::SOLARMASS, 695700);
-    Planet* p_earth = new Planet(Data::APHELION, 0, 0, 1757.4, Data::EARTHMASS, 6371);
-
-    Planet sun = *p_sun;
-    Planet earth = *p_earth;
+    Planet* p_sun = new Planet("sun", 0, 0, 0, 0, Data::SOLARMASS, 695700);
+    Planet* p_earth = new Planet("earth", Data::APHELION, 0, 0, 1757.4, Data::EARTHMASS, 6371);
+    Planet* p_moon = new Planet("moon", Data::APHELION + Data::APOGEE, 0, 0, 1757.4 + 57.96, Data::LUNARMASS, 1737.4);
 
     p_sun->addChild(p_earth);
+    p_sun->addChild(p_moon);
+    p_earth->addChild(p_sun);
+    p_earth->addChild(p_moon);
+    p_moon->addChild(p_sun);
+    p_moon->addChild(p_earth);
 
-    Body* allBodies[] = {p_sun, p_earth};
+    Body* allBodies[] = {p_sun, p_earth, p_moon};
 
     ofstream file("log.txt");
 
@@ -39,6 +45,8 @@ int main(){
         file << Tools::coordsToString(coords);
 
         p_sun->applyGravity();
+        p_earth->applyGravity();
+        p_moon->applyGravity();
 
         for (Body* element: allBodies){
 
@@ -51,20 +59,41 @@ int main(){
     file.close();
 }
 
-void prompt(){
+string prompt(){
 
     cout << ">";
     string cmdfull;
     cin >> cmdfull;
     cout << "\n";
 
-    string* cmd;
+    string* cmd = new string[3];
+    Tools::split(cmdfull, cmd);
 
-    split(cmdfull, cmd);
+    if (cmd[0].compare("time")){
+        
+        return sim.time(cmd[1], cmd[2]);
 
+    } else if (cmd[0].compare("make")){
 
-}
+        return sim.make(cmd[1]);
 
-void split(string origin, string* target){
+    } else if (cmd[0].compare("delete")){
 
+        return sim.deleteObject(cmd[1]);
+
+    } else if (cmd[0].compare("edit")){
+
+        return sim.edit(cmd[1]);
+
+    } else if (cmd[0].compare("get")){
+
+        return sim.getData(cmd[1], cmd[2]);
+
+    } else if (cmd[0].compare("log")){
+
+        return sim.configLog(cmd[1], cmd[2]);
+
+    }
+
+    delete cmd;
 }

@@ -23,6 +23,7 @@ namespace Tools{
     double calcAcceleration(double mass, double dist);
     double TONtoKG(double tons);
     double KMtoM(double kms);
+    void split(string origin, string* target);
 
     /* Receives two vectors and return their sum
        @param v1 A cartesian vector
@@ -231,5 +232,40 @@ namespace Tools{
     */
     double KMtoM(double kms){
         return kms*1000;
+    }
+
+    /* Takes as string and tokenizes it with whitespaces as separators
+       @param origin The origin string
+       @returns target - A string array
+       @throws NullInputException If the input parameter is null
+       @throws NullOutputException If the output parameter is null
+    */
+    void split(string origin, string* target){
+
+        if (origin.empty()){
+            throw "NullInputException";
+        } else if (target == nullptr){
+            throw "NullOutputException";
+        }
+
+        int separator_index = 0;
+        int target_index = 0;
+        for (int i = 0; i < origin.length(); i++){
+            if (origin[i] == ' '){
+                for (int k = separator_index; k < i; k++){
+                    target[target_index][k - separator_index] = origin[k];
+                }
+
+                target_index++;
+                separator_index = i+1;
+            }
+        }
+
+        if (target_index < 3){
+            for (int k = separator_index; k < origin.length(); k++){
+                target[target_index][k - separator_index] = origin[k];
+            }
+        }
+
     }
 }
