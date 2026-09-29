@@ -15,9 +15,19 @@
 using namespace std;
 
 Simulation sim;
+string prompt();
+void quickTest();
 
 int main(){
+    Tools::clearScreen();
 
+    while(true){
+        cout << prompt() << "\n";
+    }
+}
+
+void quickTest(){
+   
     Planet* p_sun = new Planet("sun", 0, 0, 0, 0, Data::SOLARMASS, 695700);
     Planet* p_earth = new Planet("earth", Data::APHELION, 0, 0, 1757.4, Data::EARTHMASS, 6371);
     Planet* p_moon = new Planet("moon", Data::APHELION + Data::APOGEE, 0, 0, 1757.4 + 57.96, Data::LUNARMASS, 1737.4);
@@ -56,7 +66,7 @@ int main(){
     }
 
     delete coords;
-    file.close();
+    file.close(); 
 }
 
 string prompt(){
@@ -69,31 +79,42 @@ string prompt(){
     string* cmd = new string[3];
     Tools::split(cmdfull, cmd);
 
+    string result;
+
     if (cmd[0].compare("time")){
         
-        return sim.time(cmd[1], cmd[2]);
+        result = sim.time(cmd[1], cmd[2]);
 
     } else if (cmd[0].compare("make")){
 
-        return sim.make(cmd[1]);
+        result = sim.make(cmd[1]);
 
     } else if (cmd[0].compare("delete")){
 
-        return sim.deleteObject(cmd[1]);
+        result = sim.deleteObject(cmd[1]);
 
     } else if (cmd[0].compare("edit")){
 
-        return sim.edit(cmd[1]);
+        result = sim.edit(cmd[1]);
 
     } else if (cmd[0].compare("get")){
 
-        return sim.getData(cmd[1], cmd[2]);
+        result = sim.getData(cmd[1], cmd[2]);
 
     } else if (cmd[0].compare("log")){
 
-        return sim.configLog(cmd[1], cmd[2]);
+        result = sim.configLog(cmd[1], cmd[2]);
+
+    } else if (cmd[0].compare("quit")){
+
+        exit(0);
+
+    } else if (cmd[0].compare("quick")){
+
+        quickTest();
 
     }
 
     delete cmd;
+    return result;
 }

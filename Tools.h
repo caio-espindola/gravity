@@ -24,6 +24,7 @@ namespace Tools{
     double TONtoKG(double tons);
     double KMtoM(double kms);
     void split(string origin, string* target);
+    void clearScreen();
 
     /* Receives two vectors and return their sum
        @param v1 A cartesian vector
@@ -266,6 +267,14 @@ namespace Tools{
                 target[target_index][k - separator_index] = origin[k];
             }
         }
+
+    }
+
+    /* Clears the terminal screen
+    */
+    void clearScreen(){
+
+        cout << "\033[2J\033[1;1H";
 
     }
 }

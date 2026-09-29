@@ -73,39 +73,46 @@ class Simulation {
 
         string make(string mode){
 
-            bool success = false;
+            string msg;
 
             if (mode.compare("point")){
 
-                success = makePoint();
+                msg = makePoint();
 
             } else if (mode.compare("body")){
 
-                success = makeBody();
+                msg = makeBody();
 
             } else if (mode.compare("planet")){
 
-                success = makePlanet();
-
-            }
-
-            if (success){
-
-                return mode + "created";
+                msg = makePlanet();
 
             } else {
 
-                return mode + "not created: check data";
+                throw "InvalidParameterException";
 
             }
+
+            return msg;
 
         }
 
         string deleteObject(string name){
 
+            Point* p_obj = getObject(name);
+
+            if (p_obj == nullptr){
+                return "Object \"" + name + "\" not found";
+            } else {
+                delete p_obj;
+                return "Object \"" + name + "\" deleted";
+            }
+
         }
 
         string edit(string name){
+
+
 
         }
 
@@ -115,9 +122,20 @@ class Simulation {
 
         Point* getObject(string name){
 
+            for (Point* obj : universe){
+                if (obj->getName().compare(name)){
+                    return obj;
+                }
+            }
+
+            return nullptr;
+
         }
 
     private:
+
+        vector<Body*> universe;
+        long sim_time;
 
         long getTime(){
 
@@ -149,23 +167,20 @@ class Simulation {
 
         }
 
-        bool makePoint(){
+        string makePoint(){
 
         }
 
-        bool makeBody(){
+        string makeBody(){
 
         }
 
-        bool makePlanet(){
+        string makePlanet(){
 
         }
 
         bool editObject(string attribute, double* value){
 
         }
-
-        vector<Body*> universe;
-        long sim_time;
 
 };
