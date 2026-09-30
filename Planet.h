@@ -22,15 +22,16 @@ class Planet: public Body {
         }
 
         void applyGravity(){
-            Planet* p_child;
 
             for (Planet* p_child : this->children){
                 this->applyGravTo(p_child);
             }
+
         }
 
     private:
 
+        Tools::ObjectType obj_type = Tools::PLANET;
         vector<Planet*> children;
 
 };

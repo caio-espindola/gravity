@@ -20,6 +20,7 @@ void quickTest();
 
 int main(){
     Tools::clearScreen();
+    sim.configLog("file", "log.csv");
 
     while(true){
         cout << prompt() << "\n";
@@ -76,10 +77,10 @@ string prompt(){
     cin >> cmdfull;
     cout << "\n";
 
-    string* cmd = new string[3];
+    string cmd[] = {"", "", ""};
     Tools::split(cmdfull, cmd);
 
-    string result;
+    string result = "";
 
     if (cmd[0].compare("time")){
         
@@ -115,6 +116,5 @@ string prompt(){
 
     }
 
-    delete cmd;
     return result;
 }
