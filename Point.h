@@ -9,16 +9,30 @@
 class Point {
     public:
         
-        Point(double x, double y){
+        Point(string name, double x, double y){
             coords[0] = x;
             coords[1] = y;
+            this->name = name;
         }
 
-        Point(double x, double y, double trajectory_abs_x, double trajectory_abs_y){
+        Point(string name, double x, double y, double trajectory_abs_x, double trajectory_abs_y){
             coords[0] = x;
             coords[1] = y;
             trajectory_abs[0] = trajectory_abs_x;
             trajectory_abs[1] = trajectory_abs_y;
+            this->name = name;
+        }
+
+        string getName(){
+            return this->name;
+        }
+
+        void setName(string name){
+            this->name = name;
+        }
+
+        Tools::ObjectType getType(){
+            return this->obj_type;
         }
 
         void updatePosition(){ // Alters the point's position based on its current trajectory
@@ -33,14 +47,10 @@ class Point {
 
             this->setCoords(new_coords[0], new_coords[1]);
 
-            delete coords;
-            delete trajectory;
-            delete new_coords;
+            delete coords, trajectory, new_coords;
         }
 
         void applyTrajectory(double* vector){ // Receives a vector and updates this point's absolute trajectory as the sum of the previous trajectory and the new parameter
-
-            // cout << "vector: " << vector[0] << " / " << vector[1] << "\n";
             
             double* new_trajectory = new double[2];
             double* trajectory = new double[2];
@@ -50,8 +60,8 @@ class Point {
             Tools::vectorSum(trajectory, vector, new_trajectory);
 
             this->setTrajectory(new_trajectory);
-            delete new_trajectory;
-            delete trajectory;
+
+            delete new_trajectory, trajectory;
 
         }
 
@@ -70,9 +80,7 @@ class Point {
             Tools::vectorSub(this_trajectory, point_trajectory, rel_trajectory);
             double speed = Tools::getModulus(rel_trajectory);
 
-            delete rel_trajectory;
-            delete this_trajectory;
-            delete point_trajectory;
+            delete rel_trajectory, this_trajectory, point_trajectory;
 
             return speed;
         }
@@ -81,8 +89,6 @@ class Point {
 
             trajectory[0] = this->trajectory_abs[0];
             trajectory[1] = this->trajectory_abs[1];
-
-            // cout << "trajectory from get(): " << this->trajectory_abs[0] << " / " << this->trajectory_abs[1] << "\n";
 
         }
         
@@ -99,12 +105,10 @@ class Point {
         }
 
         void setTrajectory(double* trajectory){
-            // cout << "previous: " << this->trajectory_abs[0] << " / " << this->trajectory_abs[1] << "\n";
 
             this->trajectory_abs[0] = trajectory[0];
             this->trajectory_abs[1] = trajectory[1];
 
-            // cout << "after: " << this->trajectory_abs[0] << " / " << this->trajectory_abs[1] << "\n";
         }
 
         double getDistance(Point* p){
@@ -119,15 +123,15 @@ class Point {
             Tools::vectorSub(this_coords, point_coords, rel_vector);
             double distance = Tools::getModulus(rel_vector);
 
-            delete rel_vector;
-            delete this_coords;
-            delete point_coords;
+            delete rel_vector, this_coords, point_coords;
 
             return distance;
         }
 
     private:
         
+        Tools::ObjectType obj_type = Tools::POINT;
         double coords[2];
         double trajectory_abs[2];
+        string name;
 };
