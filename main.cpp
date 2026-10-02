@@ -74,7 +74,7 @@ string prompt(){
 
     cout << ">";
     string cmdfull;
-    cin >> cmdfull;
+    getline(cin, cmdfull);
     cout << "\n";
 
     string cmd[] = {"", "", ""};
