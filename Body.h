@@ -31,6 +31,11 @@ class Body: public Point {
         }
 
         void applyGravTo(Body* b){
+
+            if (this == b){
+                return;
+            }
+
             double dist = this->getDistance(b);
             double acceleration = Tools::calcAcceleration(this->getMass(), dist);
 
@@ -52,10 +57,16 @@ class Body: public Point {
 
             b->applyTrajectory(cartesians);
 
-            delete rel_vector;
-            delete body_coords;
-            delete this_coords;
-            delete cartesians;
+            delete rel_vector, body_coords, this_coords, cartesians;
+
+        }
+
+        void applyGravity(vector<Body*> bodies){
+
+            for (Body* b : bodies){
+                this->applyGravTo(b);
+            }
+            
         }
 
         double getRadius(){
@@ -67,6 +78,8 @@ class Body: public Point {
         }
 
     private:
+
+        Tools::ObjectType obj_type = Tools::BODY;
         double mass; // Tons
         double radius; // Kilometers
 };

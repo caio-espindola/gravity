@@ -20,6 +20,7 @@ void quickTest();
 
 int main(){
     Tools::clearScreen();
+    sim.configLog("file", "log.csv");
 
     while(true){
         cout << prompt() << "\n";
@@ -76,45 +77,44 @@ string prompt(){
     cin >> cmdfull;
     cout << "\n";
 
-    string* cmd = new string[3];
+    string cmd[] = {"", "", ""};
     Tools::split(cmdfull, cmd);
 
-    string result;
+    string result = "";
 
-    if (cmd[0].compare("time")){
+    if (cmd[0] == "time"){
         
         result = sim.time(cmd[1], cmd[2]);
 
-    } else if (cmd[0].compare("make")){
+    } else if (cmd[0] == "make"){
 
         result = sim.make(cmd[1]);
 
-    } else if (cmd[0].compare("delete")){
+    } else if (cmd[0] == "delete"){
 
         result = sim.deleteObject(cmd[1]);
 
-    } else if (cmd[0].compare("edit")){
+    } else if (cmd[0] == "edit"){
 
         result = sim.edit(cmd[1]);
 
-    } else if (cmd[0].compare("get")){
+    } else if (cmd[0] == "get"){
 
         result = sim.getData(cmd[1], cmd[2]);
 
-    } else if (cmd[0].compare("log")){
+    } else if (cmd[0] == "log"){
 
         result = sim.configLog(cmd[1], cmd[2]);
 
-    } else if (cmd[0].compare("quit")){
+    } else if (cmd[0] == "quit"){
 
         exit(0);
 
-    } else if (cmd[0].compare("quick")){
+    } else if (cmd[0] == "quick"){
 
         quickTest();
 
     }
 
-    delete cmd;
     return result;
 }

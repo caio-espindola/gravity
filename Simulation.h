@@ -17,33 +17,29 @@ class Simulation {
 
         string time(string mode, string val){
 
-            long value;
+            if (mode == "get"){
 
-            try {
-                value = stol(val);
-            } catch (invalid_argument e){
-                throw "InvalidParameterException";
+                return "Current time: " + to_string(getTime());
+
             }
 
-            if (mode.compare("get")){
+            long value = abs(stol(val));
+            
+            if (mode == "pass"){
 
-                return to_string(getTime());
+                return "New current time: " + to_string(passTime(value));
 
-            } else if (mode.compare("pass")){
-
-                return to_string(passTime(value));
-
-            } else if (mode.compare("save")){
+            } else if (mode == "save"){
 
                 return saveTime(value);
 
-            } else if (mode.compare("load")){
+            } else if (mode == "load"){
 
                 return loadTime(value);
 
             } else {
 
-                throw "InvalidParameterException";
+                throw invalid_argument(mode);
 
             }
 
@@ -51,21 +47,21 @@ class Simulation {
 
         string configLog(string mode, string name){
 
-            if (mode.compare("toggle")){
+            if (mode == "toggle"){
 
                 return toggleLog();
 
-            } else if (mode.compare("verbose")){
+            } else if (mode == "verbose"){
 
                 return verboseLog();
 
-            } else if (mode.compare("file")){
+            } else if (mode == "file"){
 
                 return fileLog(name);
 
             } else {
 
-                throw "InvalidParameterException";
+                throw invalid_argument(mode);
 
             }
 
@@ -75,26 +71,23 @@ class Simulation {
 
             string msg;
 
-            if (mode.compare("point")){
+            if (mode == "point"){
 
-                msg = makePoint();
+                return makePoint();
 
-            } else if (mode.compare("body")){
+            } else if (mode == "body"){
 
-                msg = makeBody();
+                return makeBody();
 
-            } else if (mode.compare("planet")){
+            } else if (mode == "planet"){
 
-                msg = makePlanet();
+                return makePlanet();
 
             } else {
 
-                throw "InvalidParameterException";
+                throw invalid_argument(mode);
 
             }
-
-            return msg;
-
         }
 
         string deleteObject(string name){
@@ -112,18 +105,60 @@ class Simulation {
 
         string edit(string name){
 
+            Point* obj = getObject(name);
 
+            if (obj == nullptr){
+                return "Object \"" + name + "\" not found";
+            }
+
+            if (obj->getType() == Tools::POINT){
+
+                return editPoint(obj);
+
+            } else if (obj->getType() == Tools::BODY){
+
+                return editBody((Body*) obj);
+
+            } else if (obj->getType() == Tools::PLANET){
+
+                return editPlanet((Planet*) obj);
+
+            } else {
+                return "Unknown type: " + obj->getType();
+            }
 
         }
 
         string getData(string name, string attribute){
+
+            Point* obj = getObject(name);
+
+            if (obj == nullptr){
+                return "Object \"" + name + "\" not found";
+            }
+            
+            if (obj->getType() == Tools::POINT){
+
+                return getDataPoint(obj, attribute);
+
+            } else if (obj->getType() == Tools::BODY){
+
+                return getDataBody((Body*) obj, attribute);
+
+            } else if (obj->getType() == Tools::PLANET){
+
+                return getDataPlanet((Planet*) obj, attribute);
+
+            } else {
+                return "Unknown type: " + obj->getType();
+            }
 
         }
 
         Point* getObject(string name){
 
             for (Point* obj : universe){
-                if (obj->getName().compare(name)){
+                if (obj->getName() == name){
                     return obj;
                 }
             }
@@ -135,7 +170,14 @@ class Simulation {
     private:
 
         vector<Body*> universe;
-        long sim_time;
+        long sim_time = 0;
+        bool logging = true;
+        bool verbose = false;
+
+        bool addToUniverse(Body* b){
+            this->universe.push_back(b);
+            return (universe.back() == b);
+        }
 
         long getTime(){
 
@@ -145,6 +187,51 @@ class Simulation {
 
         long passTime(long time){
 
+            for (long t = sim_time; t < sim_time + time; t++){
+                for (Body* obj : universe){
+                    obj->applyGravity(universe);
+                    obj->updatePosition();
+                }
+                log();
+                sim_time++;
+            }
+
+            return time + sim_time;
+
+        }
+
+        void log(){
+
+            double* coords = new double[2];
+            double* traj = new double[2];
+
+            if (logging && !verbose){
+                for (Body* obj : universe){
+
+                    obj->getCoords(coords);
+
+                    string name = obj->getName();
+                    string str_coords = Tools::coordsToString(coords);
+
+                    clog << sim_time << ";" << name << ";" << str_coords << "\n";
+                }
+            }
+
+            if (logging && verbose){
+                for (Body* obj : universe){
+
+                    obj->getCoords(coords);
+                    obj->getTrajectory(traj);
+
+                    string name = obj->getName();
+                    string str_coords = Tools::coordsToString(coords);
+                    string str_traj = Tools::coordsToString(traj);
+
+                    clog << sim_time << ";" << name << ";" << str_coords << ";" << str_traj << "\n";
+                }
+            }
+
+            delete coords, traj;
         }
 
         string saveTime(int slot){
@@ -156,7 +243,13 @@ class Simulation {
         }
 
         string toggleLog(){
-
+            if (logging){
+                logging = false;
+                return "Logging is now disabled";
+            } else {
+                logging = true;
+                return "Logging is now enabled";
+            }
         }
 
         string verboseLog(){
@@ -164,6 +257,32 @@ class Simulation {
         }
 
         string fileLog(string name){
+            ofstream log(name);
+            clog.rdbuf(log.rdbuf());
+            return "Logs redirected to file " + name;
+        }
+
+        string getDataPoint(Point* obj, string attribute){
+
+        }
+
+        string getDataBody(Body* obj, string attribute){
+
+        }
+
+        string getDataPlanet(Planet* obj, string attribute){
+
+        }
+
+        string editPoint(Point* obj){
+
+        }
+
+        string editBody(Body* obj){
+
+        }
+
+        string editPlanet(Planet* obj){
 
         }
 
@@ -178,9 +297,4 @@ class Simulation {
         string makePlanet(){
 
         }
-
-        bool editObject(string attribute, double* value){
-
-        }
-
 };
