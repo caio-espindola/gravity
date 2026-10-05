@@ -255,7 +255,7 @@ namespace Tools{
     */
     void split(string origin, string* target){
 
-        if (origin.empty()){
+        if (origin == ""){
             throw invalid_argument("string origin");
         } else if (target == nullptr){
             throw invalid_argument("string* target");
@@ -266,7 +266,7 @@ namespace Tools{
         for (int i = 0; i < origin.length(); i++){
             if (origin[i] == ' '){
                 for (int k = separator_index; k < i; k++){
-                    target[target_index][k - separator_index] = origin[k];
+                    target[target_index].append(1, origin[k]);
                 }
 
                 target_index++;
@@ -276,10 +276,9 @@ namespace Tools{
 
         if (target_index < 3){
             for (int k = separator_index; k < origin.length(); k++){
-                target[target_index][k - separator_index] = origin[k];
+                target[target_index].append(1, origin[k]);
             }
         }
-
     }
 
     /* Clears the terminal screen

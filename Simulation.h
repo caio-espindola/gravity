@@ -17,21 +17,23 @@ class Simulation {
 
         string time(string mode, string val){
 
+            if (mode == "get"){
+
+                return "Current time: " + to_string(getTime());
+
+            }
+
             long value = abs(stol(val));
-
-            if (mode.compare("get")){
-
-                return to_string(getTime());
-
-            } else if (mode.compare("pass")){
+            
+            if (mode == "pass"){
 
                 return "New current time: " + to_string(passTime(value));
 
-            } else if (mode.compare("save")){
+            } else if (mode == "save"){
 
                 return saveTime(value);
 
-            } else if (mode.compare("load")){
+            } else if (mode == "load"){
 
                 return loadTime(value);
 
@@ -45,15 +47,15 @@ class Simulation {
 
         string configLog(string mode, string name){
 
-            if (mode.compare("toggle")){
+            if (mode == "toggle"){
 
                 return toggleLog();
 
-            } else if (mode.compare("verbose")){
+            } else if (mode == "verbose"){
 
                 return verboseLog();
 
-            } else if (mode.compare("file")){
+            } else if (mode == "file"){
 
                 return fileLog(name);
 
@@ -69,15 +71,15 @@ class Simulation {
 
             string msg;
 
-            if (mode.compare("point")){
+            if (mode == "point"){
 
                 return makePoint();
 
-            } else if (mode.compare("body")){
+            } else if (mode == "body"){
 
                 return makeBody();
 
-            } else if (mode.compare("planet")){
+            } else if (mode == "planet"){
 
                 return makePlanet();
 
@@ -156,7 +158,7 @@ class Simulation {
         Point* getObject(string name){
 
             for (Point* obj : universe){
-                if (obj->getName().compare(name)){
+                if (obj->getName() == name){
                     return obj;
                 }
             }
@@ -168,9 +170,14 @@ class Simulation {
     private:
 
         vector<Body*> universe;
-        long sim_time;
+        long sim_time = 0;
         bool logging = true;
         bool verbose = false;
+
+        bool addToUniverse(Body* b){
+            this->universe.push_back(b);
+            return (universe.back() == b);
+        }
 
         long getTime(){
 
