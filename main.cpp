@@ -5,6 +5,8 @@
 #include <string>
 #include <cstring>
 #include <fstream>
+#include <omp.h>
+
 #include "Planet.h"
 #include "Body.h"
 #include "Point.h"
@@ -40,7 +42,7 @@ void quickTest(){
     p_moon->addChild(p_sun);
     p_moon->addChild(p_earth);
 
-    Body* allBodies[] = {p_sun, p_earth, p_moon};
+    vector<Body*> allBodies = {p_sun, p_earth, p_moon};
 
     ofstream file("log.txt");
 
@@ -48,6 +50,7 @@ void quickTest(){
     double* trajectory = new double[2];
 
     int i;
+    const int n = allBodies.size();
 
     for (i = 0; i < 525680; i++){ //525680
         p_earth->getCoords(coords);
@@ -55,18 +58,16 @@ void quickTest(){
 
         file << Tools::coordsToString(coords);
 
-        p_sun->applyGravity();
-        p_earth->applyGravity();
-        p_moon->applyGravity();
-
-        for (Body* element: allBodies){
-
-            element->updatePosition();
-
+#       pragma omp parallel for num_threads(12)
+        for (int k = 0; k < n; k++){
+            allBodies[k]->receiveGravity(allBodies);
+#           pragma omp barrier
+            allBodies[k]->updatePosition();
         }
+
     }
 
-    delete coords;
+    delete coords, p_sun, p_moon, p_earth;
     file.close(); 
 }
 

@@ -69,6 +69,14 @@ class Body: public Point {
             
         }
 
+        void receiveGravity(vector<Body*> bodies){
+
+            for (Body* b : bodies){
+                b->applyGravTo(this);
+            }
+
+        }
+
         double getRadius(){
             return this->radius;
         }

@@ -1,9 +1,13 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <cstdint>
 #include <vector>
 #include <string>
 #include <fstream>
+#include <omp.h>
+
 #include "Planet.h"
 #include "Body.h"
 #include "Point.h"
@@ -14,6 +18,10 @@ using namespace std;
 
 class Simulation {
     public:
+
+        // Simulation(int threads){
+        //     this->threads = threads;
+        // }
 
         string time(string mode, string val){
 
@@ -173,10 +181,15 @@ class Simulation {
         long sim_time = 0;
         bool logging = true;
         bool verbose = false;
+        int threads = 1;
 
         bool addToUniverse(Body* b){
-            this->universe.push_back(b);
-            return (universe.back() == b);
+            if (getObject(b->getName()) == nullptr){
+                this->universe.push_back(b);
+                return (universe.back() == b);
+            } else {
+                return false;
+            }
         }
 
         long getTime(){
@@ -187,16 +200,23 @@ class Simulation {
 
         long passTime(long time){
 
-            for (long t = sim_time; t < sim_time + time; t++){
-                for (Body* obj : universe){
-                    obj->applyGravity(universe);
-                    obj->updatePosition();
+            long current_sim_time =  sim_time;
+            const int n = universe.size();
+
+            for (long t = current_sim_time; t < current_sim_time + time; t++){
+
+#               pragma omp parallel for num_threads(threads)
+                for (int i = 0; i < n; i++){
+                    universe[i]->receiveGravity(universe);
+#                   pragma omp barrier
+                    universe[i]->updatePosition();
                 }
+
                 log();
                 sim_time++;
             }
 
-            return time + sim_time;
+            return sim_time;
 
         }
 
@@ -253,7 +273,13 @@ class Simulation {
         }
 
         string verboseLog(){
-
+            if (verbose){
+                verbose = false;
+                return "Verbose logging is now disabled";
+            } else {
+                verbose = true;
+                return "Verbose logging is now enabled";
+            }
         }
 
         string fileLog(string name){
@@ -263,6 +289,8 @@ class Simulation {
         }
 
         string getDataPoint(Point* obj, string attribute){
+
+
 
         }
 
@@ -288,13 +316,128 @@ class Simulation {
 
         string makePoint(){
 
+            string name, str_x, str_y, str_traj_x, str_traj_y;
+            double x, y, traj_x, traj_y;
+
+            cout << "Point name: ";
+            getline(cin, name);
+
+            cout << "Point x position: ";
+            getline(cin, str_x);
+
+            cout << "Point y position";
+            getline(cin, str_y);
+
+            cout << "Point x trajectory: ";
+            getline(cin, str_traj_x);
+
+            cout << "Point y trajectory: ";
+            getline(cin, str_traj_y);
+
+            x = stod(str_x);
+            y = stod(str_y);
+
+            try {
+
+                traj_x = stod(str_traj_x);
+                traj_y = stod(str_traj_y);
+
+            } catch (exception e){
+
+                traj_x = traj_y = 0;
+
+            }
+
+            Point* p_point = new Point(name, x, y, traj_x, traj_y);
+
         }
 
         string makeBody(){
 
+            string name, str_x, str_y, str_traj_x, str_traj_y, str_mass, str_radius;
+            double x, y, traj_x, traj_y, mass, radius;
+
+            cout << "Body name: ";
+            getline(cin, name);
+
+            cout << "Body x position: ";
+            getline(cin, str_x);
+
+            cout << "Body y position";
+            getline(cin, str_y);
+
+            cout << "Body x trajectory: ";
+            getline(cin, str_traj_x);
+
+            cout << "Body y trajectory: ";
+            getline(cin, str_traj_y);
+
+            cout << "Body mass: ";
+            getline(cin, str_mass);
+
+            cout << "Body radius: ";
+            getline(cin, str_radius);
+
+            x = stod(str_x);
+            y = stod(str_y);
+            traj_x = stod(str_traj_x);
+            traj_y = stod(str_traj_y);
+
+            mass = stod(str_mass);
+            radius = stod(str_radius);
+
+            Body* p_body = new Body(name, x, y, traj_x, traj_y, mass, radius);
+
+            if (addToUniverse(p_body)){
+                return "Body \"" + name + "\" created";
+            } else {
+                delete p_body;
+                return "An object with this name already exists";
+            }
         }
 
         string makePlanet(){
+
+            string name, str_x, str_y, str_traj_x, str_traj_y, str_mass, str_radius;
+            double x, y, traj_x, traj_y, mass, radius;
+
+            cout << "Planet name: ";
+            getline(cin, name);
+
+            cout << "Planet x position: ";
+            getline(cin, str_x);
+
+            cout << "Planet y position";
+            getline(cin, str_y);
+
+            cout << "Planet x trajectory: ";
+            getline(cin, str_traj_x);
+
+            cout << "Planet y trajectory: ";
+            getline(cin, str_traj_y);
+
+            cout << "Planet mass: ";
+            getline(cin, str_mass);
+
+            cout << "Planet radius: ";
+            getline(cin, str_radius);
+
+            x = stod(str_x);
+            y = stod(str_y);
+            traj_x = stod(str_traj_x);
+            traj_y = stod(str_traj_y);
+
+            mass = stod(str_mass);
+            radius = stod(str_radius);
+
+            Planet* p_planet = new Planet(name, x, y, traj_x, traj_y, mass, radius);
+
+            if (addToUniverse(p_planet)){
+                return "Planet \"" + name + "\" created";
+            } else {
+                delete p_planet;
+                return "An object with this name already exists";
+            }
 
         }
 };
