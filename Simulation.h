@@ -19,10 +19,6 @@ using namespace std;
 class Simulation {
     public:
 
-        // Simulation(int threads){
-        //     this->threads = threads;
-        // }
-
         string time(string mode, string val){
 
             if (mode == "get"){
@@ -181,7 +177,6 @@ class Simulation {
         long sim_time = 0;
         bool logging = true;
         bool verbose = false;
-        int threads = 1;
 
         bool addToUniverse(Body* b){
             if (getObject(b->getName()) == nullptr){
@@ -200,20 +195,27 @@ class Simulation {
 
         long passTime(long time){
 
-            long current_sim_time =  sim_time;
+            const long start_time =  sim_time;
             const int n = universe.size();
 
-            for (long t = current_sim_time; t < current_sim_time + time; t++){
+#           pragma omp parallel num_threads(n) private(time)
+            {
+                Body* obj = universe[omp_get_thread_num()];
 
-#               pragma omp parallel for num_threads(threads)
-                for (int i = 0; i < n; i++){
-                    universe[i]->receiveGravity(universe);
+                for (long t = start_time; t < start_time + time; t++){
+
 #                   pragma omp barrier
-                    universe[i]->updatePosition();
-                }
+                    obj->receiveGravity(universe);
+#                   pragma omp barrier
+                    obj->updatePosition();
+#                   pragma omp barrier
 
-                log();
-                sim_time++;
+                    if (omp_get_thread_num() == 0){
+                        log();
+                        sim_time++;
+                    }
+                    
+                }
             }
 
             return sim_time;
@@ -290,7 +292,31 @@ class Simulation {
 
         string getDataPoint(Point* obj, string attribute){
 
+            if (attribute == "coords" || attribute == "coordinates" || attribute == "pos" || attribute == "position"){
 
+                double* coords = new double[2];
+                obj->getCoords(coords);
+                string str_coords = Tools::coordsToString(coords);
+                delete coords;
+                return str_coords;
+
+            } else if (attribute == "x"){
+
+            } else if (attribute == "y"){
+
+            } else if (attribute == "trajectory" || attribute == "traj"){
+
+            } else if (attribute == "trajx" || attribute == "xtraj"){
+
+            } else if (attribute == "trajy" || attribute == "ytraj"){
+
+            } else if (attribute == "speed" || attribute == "velocity" || attribute == "vel"){
+
+            } else {
+
+                return "No attribute with name \"" + attribute + "\" for type Point";
+
+            }
 
         }
 

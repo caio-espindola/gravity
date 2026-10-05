@@ -49,23 +49,35 @@ void quickTest(){
     double* coords = new double[2];
     double* trajectory = new double[2];
 
-    int i;
     const int n = allBodies.size();
 
-    for (i = 0; i < 525680; i++){ //525680
-        p_earth->getCoords(coords);
-        p_earth->getTrajectory(trajectory);
+    if (n > omp_get_max_threads()){
 
-        file << Tools::coordsToString(coords);
-
-#       pragma omp parallel for num_threads(12)
-        for (int k = 0; k < n; k++){
-            allBodies[k]->receiveGravity(allBodies);
-#           pragma omp barrier
-            allBodies[k]->updatePosition();
-        }
+        cout << "Object number greater than max threads" << "\n";
 
     }
+
+#   pragma omp parallel num_threads(n)
+{
+        Body* obj = allBodies[omp_get_thread_num()];
+
+        for (int i = 0; i < 525680; i++){ //525680
+
+            if (omp_get_thread_num() == 0){
+                p_sun->getCoords(coords);
+                p_sun->getTrajectory(trajectory);
+
+                file << Tools::coordsToString(coords);
+            }
+
+    #       pragma omp barrier
+            obj->receiveGravity(allBodies);
+    #       pragma omp barrier
+            obj->updatePosition();
+    #       pragma omp barrier
+
+        }
+}
 
     delete coords, p_sun, p_moon, p_earth;
     file.close(); 
