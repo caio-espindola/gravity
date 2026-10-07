@@ -81,8 +81,16 @@ class Body: public Point {
             return this->radius;
         }
 
+        void setRadius(double radius){
+            this->radius = radius;
+        }
+
         double getMass(){
             return this->mass;
+        }
+
+        void setMass(double mass){
+            this->mass = mass;
         }
 
     private:

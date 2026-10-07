@@ -109,7 +109,7 @@ string prompt(){
 
     } else if (cmd[0] == "edit"){
 
-        result = sim.edit(cmd[1]);
+        result = sim.edit(cmd[1], cmd[2]);
 
     } else if (cmd[0] == "get"){
 

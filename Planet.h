@@ -17,8 +17,38 @@ class Planet: public Body {
             this->children.push_back(p);
         }
 
+        bool removeChild(Planet* p){
+            for (int i = 0; i < children.size(); i++){
+                if (p->equals((children.at(i)))){
+
+                    children.erase(children.begin() + i);
+                    return true;
+
+                }
+            }
+
+            return false;
+        }
+
+        void clearChildren(){
+            children.clear();
+        }
+
         Planet* getChild(int i){
             return this->children.at(i);
+        }
+
+        string childList(){
+            string names = "";
+
+            for (int i = 0; i < children.size() - 1; i++){
+                names += children.at(i)->getName();
+                names += ", ";
+            }
+
+            names += children.back()->getName();
+
+            return names;
         }
 
         void applyGravity(){

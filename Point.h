@@ -23,6 +23,12 @@ class Point {
             this->name = name;
         }
 
+        bool equals(Point* p){
+
+            return (this->getName() == p->getName());
+
+        }
+
         string getName(){
             return this->name;
         }
@@ -104,7 +110,7 @@ class Point {
             this->coords[1] = y;
         }
 
-        void setTrajectory(double* trajectory){
+        void setTrajectory(double trajectory[]){
 
             this->trajectory_abs[0] = trajectory[0];
             this->trajectory_abs[1] = trajectory[1];
