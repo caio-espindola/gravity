@@ -9,18 +9,13 @@
 class Point {
     public:
         
-        Point(string name, double x, double y){
-            coords[0] = x;
-            coords[1] = y;
-            this->name = name;
-        }
-
         Point(string name, double x, double y, double trajectory_abs_x, double trajectory_abs_y){
             coords[0] = x;
             coords[1] = y;
             trajectory_abs[0] = trajectory_abs_x;
             trajectory_abs[1] = trajectory_abs_y;
             this->name = name;
+            this->type = "point";
         }
 
         bool equals(Point* p){
@@ -37,8 +32,8 @@ class Point {
             this->name = name;
         }
 
-        Tools::ObjectType getType(){
-            return this->obj_type;
+        string getType(){
+            return this->type;
         }
 
         void updatePosition(){ // Alters the point's position based on its current trajectory
@@ -134,9 +129,12 @@ class Point {
             return distance;
         }
 
+    protected:
+
+        string type;
+
     private:
         
-        Tools::ObjectType obj_type = Tools::POINT;
         double coords[2];
         double trajectory_abs[2];
         string name;

@@ -105,15 +105,15 @@ class Simulation {
                 return "Object \"" + name + "\" not found";
             }
 
-            if (obj->getType() == Tools::POINT){
+            if (obj->getType() == "point"){
 
                 return editPoint(obj, attribute);
 
-            } else if (obj->getType() == Tools::BODY){
+            } else if (obj->getType() == "body"){
 
                 return editBody((Body*) obj, attribute);
 
-            } else if (obj->getType() == Tools::PLANET){
+            } else if (obj->getType() == "planet"){
 
                 return editPlanet((Planet*) obj, attribute);
 
@@ -131,19 +131,20 @@ class Simulation {
                 return "Object \"" + name + "\" not found";
             }
             
-            if (obj->getType() == Tools::POINT){
+            if (obj->getType() == "point"){
 
                 return getDataPoint(obj, attribute);
 
-            } else if (obj->getType() == Tools::BODY){
+            } else if (obj->getType() == "body"){
 
                 return getDataBody((Body*) obj, attribute);
 
-            } else if (obj->getType() == Tools::PLANET){
+            } else if (obj->getType() == "planet"){
 
                 return getDataPlanet((Planet*) obj, attribute);
 
             } else {
+
                 return "Unknown type: " + obj->getType();
             }
 
@@ -204,7 +205,7 @@ class Simulation {
             const long start_time =  sim_time;
             const int n = universe.size();
 
-#           pragma omp parallel num_threads(n) private(time)
+#           pragma omp parallel num_threads(n)
             {
                 Body* obj = universe[omp_get_thread_num()];
 
@@ -670,7 +671,7 @@ class Simulation {
             cout << type + " x position: ";
             getline(cin, str_x);
 
-            cout << type + " y position";
+            cout << type + " y position: ";
             getline(cin, str_y);
 
             cout << type + " x trajectory: ";

@@ -3,3 +3,5 @@
 *.txt
 *.png
 *.csv
+.vscode/
+main

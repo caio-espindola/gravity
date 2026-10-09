@@ -26,12 +26,6 @@ namespace Tools{
     void split(string origin, string* target);
     void clearScreen();
 
-    enum ObjectType {
-        POINT,
-        BODY,
-        PLANET
-    };
-
     /* Receives two vectors and return their sum
        @param v1 A cartesian vector
        @param v2 A cartesian vector

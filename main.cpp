@@ -25,7 +25,7 @@ int main(){
     sim.configLog("file", "log.csv");
 
     while(true){
-        cout << prompt() << "\n";
+        cout << prompt() << "\n\n";
     }
 }
 
@@ -93,7 +93,7 @@ string prompt(){
     string cmd[] = {"", "", ""};
     Tools::split(cmdfull, cmd);
 
-    string result = "";
+    string result = "Unknown command";
 
     if (cmd[0] == "time"){
         

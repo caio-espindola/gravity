@@ -15,6 +15,7 @@ class Body: public Point {
 
             this->mass = mass;
             this->radius = radius;
+            this->type = "body";
 
         }
 
@@ -95,7 +96,6 @@ class Body: public Point {
 
     private:
 
-        Tools::ObjectType obj_type = Tools::BODY;
         double mass; // Tons
         double radius; // Kilometers
 };
