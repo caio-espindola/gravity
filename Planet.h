@@ -40,6 +40,11 @@ class Planet: public Body {
         }
 
         string childList(){
+
+            if (children.empty()){
+                return "<empty>";
+            }
+
             string names = "";
 
             for (int i = 0; i < children.size() - 1; i++){
@@ -47,7 +52,7 @@ class Planet: public Body {
                 names += ", ";
             }
 
-            names += children.back()->getName();
+            names += children.back()->getName();   
 
             return names;
         }

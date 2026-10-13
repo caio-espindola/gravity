@@ -13,8 +13,8 @@ class Body: public Point {
 
         Body(string name, double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Point(name, x, y, trajectory_abs_x, trajectory_abs_y){
 
-            this->mass = mass;
-            this->radius = radius;
+            this->mass = abs(mass);
+            this->radius = abs(radius);
             this->type = "body";
 
         }
@@ -83,7 +83,7 @@ class Body: public Point {
         }
 
         void setRadius(double radius){
-            this->radius = radius;
+            this->radius = abs(radius);
         }
 
         double getMass(){
@@ -91,7 +91,20 @@ class Body: public Point {
         }
 
         void setMass(double mass){
-            this->mass = mass;
+            this->mass = abs(mass);
+        }
+
+        void inverse(){
+            this->mass = (this->mass) * (-1);
+
+            double* traj = new double[2];
+
+            this->getTrajectory(traj);
+            double dx = traj[0] * -1;
+            double dy = traj[1] * -1;
+            this->setTrajectory(dx, dy);
+
+            delete traj;
         }
 
     private:

@@ -27,7 +27,7 @@ class Simulation {
 
             }
 
-            long value = abs(stol(val));
+            long value = stol(val);
             
             if (mode == "pass"){
 
@@ -43,7 +43,7 @@ class Simulation {
 
             } else {
 
-                throw invalid_argument(mode);
+                return "Invalid argument: " + mode;
 
             }
 
@@ -65,7 +65,7 @@ class Simulation {
 
             } else {
 
-                throw invalid_argument(mode);
+                return "Invalid argument: " + mode;
 
             }
 
@@ -79,7 +79,7 @@ class Simulation {
 
             } else {
 
-                throw invalid_argument(mode);
+                return "Invalid argument: " + mode;
 
             }
         }
@@ -90,10 +90,29 @@ class Simulation {
 
             if (p_obj == nullptr){
                 return "Object \"" + name + "\" not found";
-            } else {
-                delete p_obj;
-                return "Object \"" + name + "\" deleted";
             }
+
+            for (int i = 0; i < universe.size(); i++){
+                if (universe.at(i)->getName() == name){
+
+                    universe.erase(universe.begin() + i);
+                    delete p_obj;
+                    return "Object \"" + name + "\" deleted";
+
+                }
+            }
+
+            for (int i = 0; i < points.size(); i++){
+                if (points.at(i)->getName() == name){
+
+                    points.erase(points.begin() + i);
+                    delete p_obj;
+                    return "Object \"" + name + "\" deleted";
+
+                }
+            }
+
+            return "Object \"" + name + "\" not found";
 
         }
 
@@ -168,11 +187,26 @@ class Simulation {
 
         }
 
+        void closeLog(){
+            clog.rdbuf(originalclog);
+            logstream->close();
+        }
+
+        void setupLog(){
+
+            logstream = new ofstream("log.csv");
+            originalclog = clog.rdbuf(logstream->rdbuf());
+
+        }
+
     private:
 
         vector<Body*> universe;
         vector<Point*> points;
         long sim_time = 0;
+
+        ofstream* logstream;
+        streambuf* originalclog;
         bool logging = true;
         bool verbose = false;
 
@@ -204,25 +238,64 @@ class Simulation {
 
             const long start_time =  sim_time;
             const int n = universe.size();
+            const long finish_time = start_time + time;
 
-#           pragma omp parallel num_threads(n)
-            {
-                Body* obj = universe[omp_get_thread_num()];
+            if (n == 0){
+                return start_time + time;
+            }
 
-                for (long t = start_time; t < start_time + time; t++){
+            if (time >= 0){
 
-#                   pragma omp barrier
-                    obj->receiveGravity(universe);
-#                   pragma omp barrier
-                    obj->updatePosition();
-#                   pragma omp barrier
+#               pragma omp parallel num_threads(n)
+                {
+                    Body* obj = universe.at(omp_get_thread_num());
 
-                    if (omp_get_thread_num() == 0){
-                        log();
-                        sim_time++;
+                    for (long t = start_time; t < finish_time; t++){
+
+#                       pragma omp barrier
+                        obj->receiveGravity(universe);
+#                       pragma omp barrier
+                        obj->updatePosition();
+#                       pragma omp barrier
+
+                        if (omp_get_thread_num() == 0){
+                            log();
+                            sim_time++;
+                        }
+                        
                     }
-                    
                 }
+
+            } else {
+
+                for (Body* b : universe){
+                    b->inverse();
+                }
+
+#               pragma omp parallel num_threads(n)
+                {
+                    Body* obj = universe.at(omp_get_thread_num());
+
+                    for (long t = start_time; t > finish_time; t--){
+
+#                       pragma omp barrier
+                        obj->receiveGravity(universe);
+#                       pragma omp barrier
+                        obj->updatePosition();
+#                       pragma omp barrier
+
+                        if (omp_get_thread_num() == 0){
+                            log();
+                            sim_time--;
+                        }
+                        
+                    }
+                }
+
+                for (Body* b : universe){
+                    b->inverse();
+                }
+
             }
 
             return sim_time;
@@ -242,7 +315,7 @@ class Simulation {
                     string name = obj->getName();
                     string str_coords = Tools::coordsToString(coords);
 
-                    clog << sim_time << ";" << name << ";" << str_coords << "\n";
+                    clog << sim_time << ";" << name << ";" << str_coords;
                 }
             }
 
@@ -292,8 +365,9 @@ class Simulation {
         }
 
         string fileLog(string name){
-            ofstream log(name);
-            clog.rdbuf(log.rdbuf());
+            logstream->close();
+            logstream = new ofstream(name);
+            clog.rdbuf(logstream->rdbuf());
             return "Logs redirected to file " + name;
         }
 

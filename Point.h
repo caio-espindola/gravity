@@ -105,10 +105,24 @@ class Point {
             this->coords[1] = y;
         }
 
-        void setTrajectory(double trajectory[]){
+        void setCoords(double coordinates[]){
 
-            this->trajectory_abs[0] = trajectory[0];
-            this->trajectory_abs[1] = trajectory[1];
+            this->coords[0] = coordinates[0];
+            this->coords[1] = coordinates[1];
+
+        }
+
+        void setTrajectory(double dx, double dy){
+
+            this->trajectory_abs[0] = dx;
+            this->trajectory_abs[1] = dy;
+
+        }
+
+        void setTrajectory(double traj[]){
+
+            this->trajectory_abs[0] = traj[0];
+            this->trajectory_abs[1] = traj[1];
 
         }
 

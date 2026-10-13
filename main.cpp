@@ -22,7 +22,8 @@ void quickTest();
 
 int main(){
     Tools::clearScreen();
-    sim.configLog("file", "log.csv");
+
+    sim.setupLog();
 
     while(true){
         cout << prompt() << "\n\n";
@@ -121,6 +122,7 @@ string prompt(){
 
     } else if (cmd[0] == "quit"){
 
+        sim.closeLog();
         exit(0);
 
     } else if (cmd[0] == "quick"){
