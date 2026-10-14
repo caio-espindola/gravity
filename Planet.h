@@ -11,7 +11,11 @@ class Planet: public Body {
     public:
 
         Planet(string name, double x, double y, double trajectory_abs_x, double trajectory_abs_y, double mass, double radius): Body(name, x, y, trajectory_abs_x, trajectory_abs_y, mass, radius){
-            this->type = "planet";
+        
+        }
+
+        virtual string getType() override {
+            return "planet";
         }
 
         void addChild(Planet* p){
@@ -55,14 +59,6 @@ class Planet: public Body {
             names += children.back()->getName();   
 
             return names;
-        }
-
-        void applyGravity(){
-
-            for (Planet* p_child : this->children){
-                this->applyGravTo(p_child);
-            }
-
         }
 
     private:

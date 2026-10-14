@@ -15,8 +15,11 @@ class Body: public Point {
 
             this->mass = abs(mass);
             this->radius = abs(radius);
-            this->type = "body";
 
+        }
+
+        virtual string getType() override {
+            return "body";
         }
 
         bool colision(Body* b){

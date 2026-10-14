@@ -15,7 +15,6 @@ class Point {
             trajectory_abs[0] = trajectory_abs_x;
             trajectory_abs[1] = trajectory_abs_y;
             this->name = name;
-            this->type = "point";
         }
 
         bool equals(Point* p){
@@ -32,8 +31,8 @@ class Point {
             this->name = name;
         }
 
-        string getType(){
-            return this->type;
+        virtual string getType(){
+            return "point";
         }
 
         void updatePosition(){ // Alters the point's position based on its current trajectory
@@ -142,10 +141,6 @@ class Point {
 
             return distance;
         }
-
-    protected:
-
-        string type;
 
     private:
         

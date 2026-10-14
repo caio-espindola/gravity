@@ -181,7 +181,7 @@ namespace Tools{
             throw invalid_argument("double coords[]");
         }
 
-        string line = to_string(coords[0]) + ";" + to_string(coords[1]) + "\n";
+        string line = to_string(coords[0]) + ";" + to_string(coords[1]);
         return line;
     }
 

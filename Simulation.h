@@ -19,6 +19,12 @@ using namespace std;
 class Simulation {
     public:
 
+        /* Calls simulation time operations
+           @param mode The operation to be called
+           @param val The value for pass, save or load
+           @returns Operation results
+           @throws Returns "Invalid argument:" and the offending parameter
+        */
         string time(string mode, string val){
 
             if (mode == "get"){
@@ -27,7 +33,18 @@ class Simulation {
 
             }
 
-            long value = stol(val);
+            long value;
+
+            try {
+
+                value = stol(val);
+
+            } catch (invalid_argument){
+
+                return "Invalid Argument: " + val;
+
+            }
+            
             
             if (mode == "pass"){
 
@@ -49,6 +66,12 @@ class Simulation {
 
         }
 
+        /* Calls simulation log operations
+           @param mode The operation to be called
+           @param name The filename for log redirection
+           @returns Operation results
+           @throws Returns "Invalid argument:" and the offending parameter
+        */
         string configLog(string mode, string name){
 
             if (mode == "toggle"){
@@ -71,6 +94,11 @@ class Simulation {
 
         }
 
+        /* Calls simulation make operations
+           @param mode The type of object to be created
+           @returns Operation results
+           @throws Returns "Invalid argument:" if type is invalid
+        */
         string make(string mode){
 
             if (mode == "point" || mode == "body" || mode == "planet"){
@@ -84,6 +112,11 @@ class Simulation {
             }
         }
 
+        /* Finds an object by name and removes it from the simulation
+           @param name The object to be deleted
+           @return The result of the operation
+           @throws Returns "Object <name> not found" if no such object exists
+        */
         string deleteObject(string name){
 
             Point* p_obj = getObject(name);
@@ -116,6 +149,12 @@ class Simulation {
 
         }
 
+        /* Calls the simulation edit operations
+           @param name The object to be edited
+           @param attribute The field to be modified
+           @returns Operation results
+           @throws "Not found", "Unknown type", "No attribute", "Unknown command"
+        */
         string edit(string name, string attribute){
 
             Point* obj = getObject(name);
@@ -142,6 +181,12 @@ class Simulation {
 
         }
 
+        /* Calls the simulation get operations
+           @param name The object to be inspected
+           @param attribute The field to be accessed
+           @returns Operation results
+           @throws "Not found", "Unknown type", "No attribute"
+        */
         string getData(string name, string attribute){
 
             Point* obj = getObject(name);
@@ -169,29 +214,15 @@ class Simulation {
 
         }
 
-        Point* getObject(string name){
-
-            for (Body* obj : universe){
-                if (obj->getName() == name){
-                    return obj;
-                }
-            }
-
-            for (Point* p : points){
-                if (p->getName() == name){
-                    return p;
-                }
-            }
-
-            return nullptr;
-
-        }
-
+        /* Closes the log filestream
+        */
         void closeLog(){
             clog.rdbuf(originalclog);
             logstream->close();
         }
 
+        /* Initializes the log filestream to "log.csv"
+        */
         void setupLog(){
 
             logstream = new ofstream("log.csv");
@@ -210,6 +241,35 @@ class Simulation {
         bool logging = true;
         bool verbose = false;
 
+        // Universe:
+
+        /* Return a pointer to the object with the given name in universe[] or points[]
+           @param name The name of the object to be retrieved
+           @returns A Point pointer to the object
+           @throws Returns nullptr if object not found
+        */
+        Point* getObject(string name){
+
+            for (Body* obj : universe){
+                if (obj->getName() == name){
+                    return obj;
+                }
+            }
+
+            for (Point* p : points){
+                if (p->getName() == name){
+                    return p;
+                }
+            }
+
+            return nullptr;
+
+        }
+
+        /* Adds an object to the universe array
+           @param b A Body object
+           @returns True if the addition was succesful
+        */
         bool addToUniverse(Body* b){
             if (getObject(b->getName()) == nullptr){
                 this->universe.push_back(b);
@@ -219,6 +279,11 @@ class Simulation {
             }
         }
 
+
+        /* Adds an object to the points array
+           @param b A Point object
+           @returns True if the addition was succesful
+        */
         bool addToPoints(Point* p){
             if (getObject(p->getName()) == nullptr){
                 points.push_back(p);
@@ -228,12 +293,21 @@ class Simulation {
             }
         }
 
+        // Time
+
+        /* Returns the current sim time
+        */
         long getTime(){
 
             return sim_time;
 
         }
 
+
+        /* Passes time and calculates gravity and trajectories
+           @param time The amount of time in minutes to be passed
+           @returns The new current time
+        */
         long passTime(long time){
 
             const long start_time =  sim_time;
@@ -241,7 +315,7 @@ class Simulation {
             const long finish_time = start_time + time;
 
             if (n == 0){
-                return start_time + time;
+                return start_time + abs(time);
             }
 
             if (time >= 0){
@@ -268,72 +342,38 @@ class Simulation {
 
             } else {
 
-                for (Body* b : universe){
-                    b->inverse();
-                }
+//                 for (Body* b : universe){
+//                     b->inverse();
+//                 }
 
-#               pragma omp parallel num_threads(n)
-                {
-                    Body* obj = universe.at(omp_get_thread_num());
+// #               pragma omp parallel num_threads(n)
+//                 {
+//                     Body* obj = universe.at(omp_get_thread_num());
 
-                    for (long t = start_time; t > finish_time; t--){
+//                     for (long t = start_time; t > finish_time; t--){
 
-#                       pragma omp barrier
-                        obj->receiveGravity(universe);
-#                       pragma omp barrier
-                        obj->updatePosition();
-#                       pragma omp barrier
+// #                       pragma omp barrier
+//                         obj->receiveGravity(universe);
+// #                       pragma omp barrier
+//                         obj->updatePosition();
+// #                       pragma omp barrier
 
-                        if (omp_get_thread_num() == 0){
-                            log();
-                            sim_time--;
-                        }
+//                         if (omp_get_thread_num() == 0){
+//                             log();
+//                             sim_time--;
+//                         }
                         
-                    }
-                }
+//                     }
+//                 }
 
-                for (Body* b : universe){
-                    b->inverse();
-                }
+//                 for (Body* b : universe){
+//                     b->inverse();
+//                 }
 
             }
 
             return sim_time;
 
-        }
-
-        void log(){
-
-            double* coords = new double[2];
-            double* traj = new double[2];
-
-            if (logging && !verbose){
-                for (Body* obj : universe){
-
-                    obj->getCoords(coords);
-
-                    string name = obj->getName();
-                    string str_coords = Tools::coordsToString(coords);
-
-                    clog << sim_time << ";" << name << ";" << str_coords;
-                }
-            }
-
-            if (logging && verbose){
-                for (Body* obj : universe){
-
-                    obj->getCoords(coords);
-                    obj->getTrajectory(traj);
-
-                    string name = obj->getName();
-                    string str_coords = Tools::coordsToString(coords);
-                    string str_traj = Tools::coordsToString(traj);
-
-                    clog << sim_time << ";" << name << ";" << str_coords << ";" << str_traj << "\n";
-                }
-            }
-
-            delete coords, traj;
         }
 
         string saveTime(int slot){
@@ -344,6 +384,57 @@ class Simulation {
 
         }
 
+        // Log:
+
+        /* Writes the current position of all objects to the current log file
+        */
+        void log(){
+
+            double* coords = new double[2];
+            double* traj = new double[2];
+
+            if (logging && !verbose){
+
+                clog << sim_time << ";";
+
+                for (Body* obj : universe){
+
+                    obj->getCoords(coords);
+
+                    string name = obj->getName();
+                    string str_coords = Tools::coordsToString(coords);
+
+                    clog << name << ";" << str_coords << ";";
+                }
+
+                clog << "\n";
+            }
+
+            if (logging && verbose){
+
+                clog << sim_time << ";";
+
+                for (Body* obj : universe){
+
+                    obj->getCoords(coords);
+                    obj->getTrajectory(traj);
+
+                    string name = obj->getName();
+                    string str_coords = Tools::coordsToString(coords);
+                    string str_traj = Tools::coordsToString(traj);
+
+                    clog << name << ";" << str_coords << ";" << str_traj << ";";
+                }
+
+                clog << "\n";
+            }
+
+            delete coords, traj;
+        }
+
+        /* Toggles logging of objects
+           @returns The new logging status
+        */
         string toggleLog(){
             if (logging){
                 logging = false;
@@ -354,6 +445,9 @@ class Simulation {
             }
         }
 
+        /* Toggles logging of object trajectories
+           @returns The new verbosity status
+        */
         string verboseLog(){
             if (verbose){
                 verbose = false;
@@ -364,6 +458,10 @@ class Simulation {
             }
         }
 
+        /* Changes the file stream for logging output
+           @param name The name of the new log file
+           @returns The result of the operation
+        */
         string fileLog(string name){
             logstream->close();
             logstream = new ofstream(name);
@@ -371,6 +469,14 @@ class Simulation {
             return "Logs redirected to file " + name;
         }
 
+        // Get:
+
+        /* Inspects an object for one of its fields
+           @param obj A pointer to the object to be inspected
+           @param attribute The field to be accessed
+           @returns The resulting data
+           @throws "No attribute"
+        */
         string getDataPoint(Point* obj, string attribute){
 
             if (attribute == "coords" || attribute == "coordinates" || attribute == "pos" || attribute == "position"){
@@ -426,6 +532,10 @@ class Simulation {
                 double speed = obj->getSpeed();
                 return to_string(speed);
 
+            } else if (attribute == "type"){
+            
+                return obj->getType();
+
             } else {
 
                 return "No attribute with name \"" + attribute + "\" for this object";
@@ -434,6 +544,12 @@ class Simulation {
 
         }
 
+        /* Inspects an object for one of its fields
+           @param obj A pointer to the object to be inspected
+           @param attribute The field to be accessed
+           @returns The resulting data
+           @throws Calls getDataPoint() if attribute is not exclusive to Body
+        */
         string getDataBody(Body* obj, string attribute){
 
             if (attribute == "mass"){
@@ -454,6 +570,12 @@ class Simulation {
 
         }
 
+        /* Inspects an object for one of its fields
+           @param obj A pointer to the object to be inspected
+           @param attribute The field to be accessed
+           @returns The resulting data
+           @throws Calls getDataBody() if attribute is not exclusive to Planet
+        */
         string getDataPlanet(Planet* obj, string attribute){
 
             if (attribute == "children" || attribute == "child" || attribute == "satellites" || attribute == "moon"){
@@ -467,6 +589,8 @@ class Simulation {
             }
 
         }
+
+        // Edit:
 
         string editPoint(Point* obj, string attribute){
 
@@ -733,6 +857,8 @@ class Simulation {
 
             }
         }
+
+        // Make:
 
         string makePoint(string type){
 
