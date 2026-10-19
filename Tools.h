@@ -258,7 +258,7 @@ namespace Tools{
         int separator_index = 0;
         int target_index = 0;
         for (int i = 0; i < origin.length(); i++){
-            if (origin[i] == ' '){
+            if (origin[i] == ' ' || origin[i] == '\n'){
                 for (int k = separator_index; k < i; k++){
                     target[target_index].append(1, origin[k]);
                 }
