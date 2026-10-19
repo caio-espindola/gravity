@@ -378,9 +378,50 @@ class Simulation {
 
         string saveTime(int slot){
 
+            string name = "slot" + to_string(slot) + ".sv";
+
+            ofstream save_file(name);
+
+            double* coords = new double[2];
+            double* traj = new double[2];
+
+            for (Body* o : universe){
+
+                o->getCoords(coords);
+                o->getTrajectory(traj);
+
+                save_file << o->getName()
+                << " " << to_string(coords[0])
+                << " " << to_string(coords[1])
+                << " " << to_string(traj[0])
+                << " " << to_string(traj[1])
+                << " " << to_string(o->getMass())
+                << " " << to_string(o->getRadius())
+                << "\n";
+            }
+
+            save_file.close();
+
         }
 
         string loadTime(int slot){
+
+            string name = "slot" + to_string(slot) + ".sv";
+            string file_line;
+
+            string* word_array = new string[7];
+            for (int i = 0; i < 7; i++) {word_array[i] = "";}
+
+            vector<string*> data;
+
+            ifstream load_file(name);
+
+            while(getline(load_file, file_line)){
+
+                Tools::split(file_line, word_array);
+                data.push_back(word_array);
+
+            }
 
         }
 
