@@ -92,7 +92,7 @@ string prompt(){
     cout << "\n";
 
     string cmd[] = {"", "", ""};
-    Tools::split(cmdfull, cmd);
+    Tools::split(cmdfull, cmd, 3);
 
     string result = "Unknown command";
 
@@ -120,7 +120,7 @@ string prompt(){
 
         result = sim.configLog(cmd[1], cmd[2]);
 
-    } else if (cmd[0] == "quit"){
+    } else if (cmd[0] == "quit" || cmd[0] == "q"){
 
         sim.closeLog();
         exit(0);

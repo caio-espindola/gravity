@@ -402,6 +402,8 @@ class Simulation {
 
             save_file.close();
 
+            return "State saved into file " + name;
+
         }
 
         string loadTime(int slot){
@@ -409,7 +411,7 @@ class Simulation {
             string name = "slot" + to_string(slot) + ".sv";
             string file_line;
 
-            string* word_array = new string[7];
+            string word_array[7];
             for (int i = 0; i < 7; i++) {word_array[i] = "";}
 
             vector<string*> data;
@@ -418,10 +420,32 @@ class Simulation {
 
             while(getline(load_file, file_line)){
 
-                Tools::split(file_line, word_array);
+                Tools::split(file_line, word_array, 7);
                 data.push_back(word_array);
 
             }
+
+            universe.clear();
+
+            for (string* s : data){
+
+                string name = s[0];
+                double x  = stod(s[1]);
+                double y = stod(s[2]);
+                double dx = stod(s[3]);
+                double dy = stod(s[4]);
+                double mass = stod(s[5]);
+                double radius = stod(s[6]);
+
+                Body* b = new Body(name, x, y, dx, dy, mass, radius);
+
+                universe.push_back(b);
+
+            }
+
+            load_file.close();
+
+            return "State loaded from file " + name;
 
         }
 

@@ -247,7 +247,7 @@ namespace Tools{
        @throws invalid_argument("string origin") If the input parameter is empty
        @throws invalid_argument("string* target") If the output parameter is null
     */
-    void split(string origin, string* target){
+    void split(string origin, string* target, int len){
 
         if (origin == ""){
             throw invalid_argument("string origin");
@@ -268,7 +268,7 @@ namespace Tools{
             }
         }
 
-        if (target_index < 3){
+        if (target_index < len){
             for (int k = separator_index; k < origin.length(); k++){
                 target[target_index].append(1, origin[k]);
             }

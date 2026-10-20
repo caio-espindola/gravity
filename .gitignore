@@ -3,6 +3,7 @@
 *.txt
 *.png
 *.csv
+*.sv
 .vscode/
 main
 makefile
