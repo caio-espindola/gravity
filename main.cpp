@@ -91,10 +91,15 @@ string prompt(){
     getline(cin, cmdfull);
     cout << "\n";
 
-    string cmd[] = {"", "", ""};
-    Tools::split(cmdfull, cmd, 3);
-
     string result = "Unknown command";
+
+    string cmd[] = {"", "", ""};
+
+    try {
+        Tools::split(cmdfull, cmd, 3);
+    } catch (invalid_argument e){
+        return result;
+    }
 
     if (cmd[0] == "time"){
         
