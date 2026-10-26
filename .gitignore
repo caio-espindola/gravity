@@ -6,4 +6,5 @@
 *.sv
 .vscode/
 main
+gravity
 makefile

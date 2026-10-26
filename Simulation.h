@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <omp.h>
+#include <chrono>
 
 #include "Planet.h"
 #include "Body.h"
@@ -318,6 +319,8 @@ class Simulation {
                 return start_time + abs(time);
             }
 
+            clock_t start = clock();
+
             if (time >= 0){
 
 #               pragma omp parallel num_threads(n)
@@ -372,6 +375,12 @@ class Simulation {
 
             }
 
+            clock_t end = clock();
+            clock_t duration = end - start;
+            duration = (float) duration / CLOCKS_PER_SEC;
+
+            cout << "delta-t: " << to_string(duration) << "\n";
+
             return sim_time;
 
         }
@@ -411,14 +420,14 @@ class Simulation {
             string name = "slot" + to_string(slot) + ".sv";
             string file_line;
 
-            string word_array[7];
-            for (int i = 0; i < 7; i++) {word_array[i] = "";}
-
             vector<string*> data;
 
             ifstream load_file(name);
 
             while(getline(load_file, file_line)){
+
+                string* word_array = new string[7];
+                for (int i = 0; i < 7; i++) {word_array[i] = "";}
 
                 Tools::split(file_line, word_array, 7);
                 data.push_back(word_array);
@@ -441,6 +450,10 @@ class Simulation {
 
                 universe.push_back(b);
 
+            }
+
+            for (string* s : data){
+                delete s;
             }
 
             load_file.close();
