@@ -40,9 +40,6 @@ class Body: public Point {
                 return;
             }
 
-            double dist = this->getDistance(b);
-            double acceleration = Tools::calcAcceleration(this->getMass(), dist);
-
             double* rel_vector = new double[2];
             double* body_coords = new double[2];
             double* this_coords = new double[2];
@@ -53,6 +50,7 @@ class Body: public Point {
 
             Tools::vectorSub(this_coords, body_coords, rel_vector);
 
+            double acceleration = Tools::calcAcceleration(this->getMass(), Tools::getModulus(rel_vector));
             double argument = Tools::getArgument(rel_vector);
 
             double polars[2] = {acceleration, argument};

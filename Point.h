@@ -45,7 +45,7 @@ class Point {
 
             Tools::vectorSum(coords, trajectory, new_coords);
 
-            this->setCoords(new_coords[0], new_coords[1]);
+            this->setCoords(new_coords);
 
             delete coords, trajectory, new_coords;
         }

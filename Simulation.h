@@ -326,9 +326,9 @@ class Simulation {
 
                     for (long t = start_time; t < finish_time; t++){
 
-#                       pragma omp barrier
                         obj->receiveGravity(universe);
 #                       pragma omp barrier
+
                         obj->updatePosition();
 #                       pragma omp barrier
 
@@ -455,10 +455,14 @@ class Simulation {
         */
         void log(){
 
+            if (!logging){
+                return;
+            }
+
             double* coords = new double[2];
             double* traj = new double[2];
 
-            if (logging && !verbose){
+            if (!verbose){
 
                 clog << sim_time << ";";
 
@@ -475,7 +479,7 @@ class Simulation {
                 clog << "\n";
             }
 
-            if (logging && verbose){
+            if (verbose){
 
                 clog << sim_time << ";";
 
